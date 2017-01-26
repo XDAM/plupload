@@ -150,7 +150,7 @@ define('moxie/core/utils/Basic', [], function() {
 		// the snippet below is awesome, however it fails to detect null, undefined and arguments types in IE lte 8
 		return ({}).toString.call(o).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
 	}
-
+		
 	/**
 	Extends the specified object with another object(s).
 
@@ -220,9 +220,9 @@ define('moxie/core/utils/Basic', [], function() {
 
 					if (typeOf(target[key]) === typeOf(value) && isComplex) {
 						merge(strict, immutable, [target[key], value]);
-					} else {
-						target[key] = value;
-					}
+						} else {
+							target[key] = value;
+						}
 				});
 			}
 		});
@@ -230,7 +230,7 @@ define('moxie/core/utils/Basic', [], function() {
 		return target;
 	}
 
-
+		
 	/**
 	A way to inherit one `class` from another in a consisstent way (more or less)
 
@@ -279,7 +279,7 @@ define('moxie/core/utils/Basic', [], function() {
 				length = obj.length;
 			} catch(ex) {
 				length = undef;
-			}
+					}
 
 			if (length === undef || typeof(length) !== 'number') {
 				// Loop object items
@@ -295,15 +295,15 @@ define('moxie/core/utils/Basic', [], function() {
 				for (i = 0; i < length; i++) {
 					if (callback(obj[i], i) === false) {
 						return;
-					}
-				}
+			}
+		}
 			}
 		}
 	}
 
 	/**
 	Checks if object is empty.
-
+	
 	@method isEmptyObj
 	@static
 	@param {Object} o Object to check.
@@ -360,7 +360,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Recieve an array of functions (usually async) to call in parallel, each  function
-	receives a callback as first argument that it should call, when it completes. After
+	receives a callback as first argument that it should call, when it completes. After 
 	everything is complete, main callback is called. Passing truthy value to the
 	callback as a first argument will interrupt the process and invoke main callback
 	immediately.
@@ -378,7 +378,7 @@ define('moxie/core/utils/Basic', [], function() {
 				if (error) {
 					return cb(error);
 				}
-
+				
 				var args = [].slice.call(arguments);
 				args.shift(); // strip error - undefined or not
 
@@ -388,15 +388,15 @@ define('moxie/core/utils/Basic', [], function() {
 				if (count === num) {
 					cbArgs.unshift(null);
 					cb.apply(this, cbArgs);
-				}
+				} 
 			});
 		});
 	}
-
-
+	
+	
 	/**
 	Find an element in array and return it's index if present, otherwise return -1.
-
+	
 	@method inArray
 	@static
 	@param {Mixed} needle Element to find
@@ -408,7 +408,7 @@ define('moxie/core/utils/Basic', [], function() {
 			if (Array.prototype.indexOf) {
 				return Array.prototype.indexOf.call(array, needle);
 			}
-
+		
 			for (var i = 0, length = array.length; i < length; i++) {
 				if (array[i] === needle) {
 					return i;
@@ -442,7 +442,7 @@ define('moxie/core/utils/Basic', [], function() {
 		for (var i in needles) {
 			if (inArray(needles[i], array) === -1) {
 				diff.push(needles[i]);
-			}
+			}	
 		}
 		return diff.length ? diff : false;
 	}
@@ -466,11 +466,11 @@ define('moxie/core/utils/Basic', [], function() {
 		});
 		return result.length ? result : null;
 	}
-
-
+	
+	
 	/**
 	Forces anything into an array.
-
+	
 	@method toArray
 	@static
 	@param {Object} obj Object with length field.
@@ -485,14 +485,14 @@ define('moxie/core/utils/Basic', [], function() {
 
 		return arr;
 	}
-
-
+	
+			
 	/**
 	Generates an unique ID. The only way a user would be able to get the same ID is if the two persons
-	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses
-	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth
+	at the same exact millisecond manage to get the same 5 random numbers between 0-65535; it also uses 
+	a counter so each ID is guaranteed to be unique for the given page. It is more probable for the earth 
 	to be hit with an asteroid.
-
+	
 	@method guid
 	@static
 	@param {String} prefix to prepend (by default 'o' will be prepended).
@@ -501,22 +501,22 @@ define('moxie/core/utils/Basic', [], function() {
 	*/
 	var guid = (function() {
 		var counter = 0;
-
+		
 		return function(prefix) {
 			var guid = new Date().getTime().toString(32), i;
 
 			for (i = 0; i < 5; i++) {
 				guid += Math.floor(Math.random() * 65535).toString(32);
 			}
-
+			
 			return (prefix || 'o_') + guid + (counter++).toString(32);
 		};
 	}());
-
+	
 
 	/**
 	Trims white spaces around the string
-
+	
 	@method trim
 	@static
 	@param {String} str
@@ -532,7 +532,7 @@ define('moxie/core/utils/Basic', [], function() {
 
 	/**
 	Parses the specified size string into a byte value. For example 10kb becomes 10240.
-
+	
 	@method parseSizeStr
 	@static
 	@param {String/Number} size String to parse or number to just pass through.
@@ -542,7 +542,7 @@ define('moxie/core/utils/Basic', [], function() {
 		if (typeof(size) !== 'string') {
 			return size;
 		}
-
+		
 		var muls = {
 				t: 1099511627776,
 				g: 1073741824,
@@ -554,7 +554,7 @@ define('moxie/core/utils/Basic', [], function() {
 		size = /^([0-9\.]+)([tmgk]?)$/.exec(size.toLowerCase().replace(/[^0-9\.tmkg]/g, ''));
 		mul = size[2];
 		size = +size[1];
-
+		
 		if (muls.hasOwnProperty(mul)) {
 			size *= muls[mul];
 		}
@@ -585,7 +585,7 @@ define('moxie/core/utils/Basic', [], function() {
 			cb.call(self);
 		}, timeout || 1);
 	}
-
+	
 
 	return {
 		guid: guid,
@@ -1516,7 +1516,7 @@ define("moxie/core/utils/Env", [
 define('moxie/core/Exceptions', [
 	'moxie/core/utils/Basic'
 ], function(Basic) {
-	
+
 	function _findKey(obj, value) {
 		var key;
 		for (key in obj) {
@@ -1527,9 +1527,9 @@ define('moxie/core/Exceptions', [
 		return null;
 	}
 
-	/**
+		/**
 	@class moxie/core/Exception
-	*/
+		 */
 	return {
 		RuntimeError: (function() {
 			var namecodes = {
@@ -1543,26 +1543,26 @@ define('moxie/core/Exceptions', [
 				this.code = code;
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + (message || ": RuntimeError " + this.code);
-			}
-			
+		}
+
 			Basic.extend(RuntimeError, namecodes);
 			RuntimeError.prototype = Error.prototype;
 			return RuntimeError;
 		}()),
-		
+
 		OperationNotAllowedException: (function() {
-			
+
 			function OperationNotAllowedException(code) {
 				this.code = code;
 				this.name = 'OperationNotAllowedException';
 			}
-			
+	
 			Basic.extend(OperationNotAllowedException, {
 				NOT_ALLOWED_ERR: 1
 			});
-			
+	
 			OperationNotAllowedException.prototype = Error.prototype;
-			
+	
 			return OperationNotAllowedException;
 		}()),
 
@@ -1578,13 +1578,13 @@ define('moxie/core/Exceptions', [
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": ImageError " + this.code;
 			}
-			
+
 			Basic.extend(ImageError, namecodes);
 			ImageError.prototype = Error.prototype;
 
 			return ImageError;
 		}()),
-
+			
 		FileException: (function() {
 			var namecodes = {
 				NOT_FOUND_ERR: 1,
@@ -1601,13 +1601,13 @@ define('moxie/core/Exceptions', [
 				this.code = code;
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": FileException " + this.code;
-			}
-			
+					}
+
 			Basic.extend(FileException, namecodes);
 			FileException.prototype = Error.prototype;
 			return FileException;
 		}()),
-		
+
 		DOMException: (function() {
 			var namecodes = {
 				INDEX_SIZE_ERR: 1,
@@ -1641,25 +1641,25 @@ define('moxie/core/Exceptions', [
 				this.code = code;
 				this.name = _findKey(namecodes, code);
 				this.message = this.name + ": DOMException " + this.code;
-			}
-			
+				}
+
 			Basic.extend(DOMException, namecodes);
 			DOMException.prototype = Error.prototype;
 			return DOMException;
 		}()),
-		
+
 		EventException: (function() {
 			function EventException(code) {
 				this.code = code;
 				this.name = 'EventException';
 			}
-			
+
 			Basic.extend(EventException, {
 				UNSPECIFIED_EVENT_TYPE_ERR: 0
 			});
 			
 			EventException.prototype = Error.prototype;
-			
+
 			return EventException;
 		}())
 	};
@@ -1876,76 +1876,76 @@ define('moxie/core/EventTarget', [
 	@constructor EventTarget
 	*/
 	function EventTarget() {
-		/**
-		Unique id of the event dispatcher, usually overriden by children
+			/**
+			Unique id of the event dispatcher, usually overriden by children
 
-		@property uid
-		@type String
-		*/
+			@property uid
+			@type String
+			*/
 		this.uid = Basic.guid();
 	}
-
+			
 
 	Basic.extend(EventTarget.prototype, {
 
-		/**
-		Can be called from within a child  in order to acquire uniqie id in automated manner
+			/**
+			Can be called from within a child  in order to acquire uniqie id in automated manner
 
-		@method init
-		*/
-		init: function() {
-			if (!this.uid) {
-				this.uid = Basic.guid('uid_');
-			}
-		},
+			@method init
+			*/
+			init: function() {
+				if (!this.uid) {
+					this.uid = Basic.guid('uid_');
+				}
+			},
 
-		/**
-		Register a handler to a specific event dispatched by the object
+			/**
+			Register a handler to a specific event dispatched by the object
 
-		@method addEventListener
-		@param {String} type Type or basically a name of the event to subscribe to
-		@param {Function} fn Callback function that will be called when event happens
-		@param {Number} [priority=0] Priority of the event handler - handlers with higher priorities will be called first
-		@param {Object} [scope=this] A scope to invoke event handler in
-		*/
-		addEventListener: function(type, fn, priority, scope) {
-			var self = this, list;
+			@method addEventListener
+			@param {String} type Type or basically a name of the event to subscribe to
+			@param {Function} fn Callback function that will be called when event happens
+			@param {Number} [priority=0] Priority of the event handler - handlers with higher priorities will be called first
+			@param {Object} [scope=this] A scope to invoke event handler in
+			*/
+			addEventListener: function(type, fn, priority, scope) {
+				var self = this, list;
 
-			// without uid no event handlers can be added, so make sure we got one
-			if (!this.hasOwnProperty('uid')) {
-				this.uid = Basic.guid('uid_');
-			}
+				// without uid no event handlers can be added, so make sure we got one
+				if (!this.hasOwnProperty('uid')) {
+					this.uid = Basic.guid('uid_');
+				}
+				
+				type = Basic.trim(type);
+				
+				if (/\s/.test(type)) {
+					// multiple event types were passed for one handler
+					Basic.each(type.split(/\s+/), function(type) {
+						self.addEventListener(type, fn, priority, scope);
+					});
+					return;
+				}
+				
+				type = type.toLowerCase();
+				priority = parseInt(priority, 10) || 0;
+				
+				list = eventpool[this.uid] && eventpool[this.uid][type] || [];
+				list.push({fn : fn, priority : priority, scope : scope || this});
+				
+				if (!eventpool[this.uid]) {
+					eventpool[this.uid] = {};
+				}
+				eventpool[this.uid][type] = list;
+			},
+			
+			/**
+			Check if any handlers were registered to the specified event
 
-			type = Basic.trim(type);
-
-			if (/\s/.test(type)) {
-				// multiple event types were passed for one handler
-				Basic.each(type.split(/\s+/), function(type) {
-					self.addEventListener(type, fn, priority, scope);
-				});
-				return;
-			}
-
-			type = type.toLowerCase();
-			priority = parseInt(priority, 10) || 0;
-
-			list = eventpool[this.uid] && eventpool[this.uid][type] || [];
-			list.push({fn : fn, priority : priority, scope : scope || this});
-
-			if (!eventpool[this.uid]) {
-				eventpool[this.uid] = {};
-			}
-			eventpool[this.uid][type] = list;
-		},
-
-		/**
-		Check if any handlers were registered to the specified event
-
-		@method hasEventListener
+			@method hasEventListener
 		@param {String} [type] Type or basically a name of the event to check
-		@return {Mixed} Returns a handler if it was found and false, if - not
-		*/
-		hasEventListener: function(type) {
+			@return {Mixed} Returns a handler if it was found and false, if - not
+			*/
+			hasEventListener: function(type) {
 			var list;
 			if (type) {
 				type = type.toLowerCase();
@@ -1953,21 +1953,21 @@ define('moxie/core/EventTarget', [
 			} else {
 				list = eventpool[this.uid];
 			}
-			return list ? list : false;
-		},
+				return list ? list : false;
+			},
+			
+			/**
+			Unregister the handler from the event, or if former was not specified - unregister all handlers
 
-		/**
-		Unregister the handler from the event, or if former was not specified - unregister all handlers
-
-		@method removeEventListener
-		@param {String} type Type or basically a name of the event
-		@param {Function} [fn] Handler to unregister
-		*/
-		removeEventListener: function(type, fn) {
+			@method removeEventListener
+			@param {String} type Type or basically a name of the event
+			@param {Function} [fn] Handler to unregister
+			*/
+			removeEventListener: function(type, fn) {
 			var self = this, list, i;
 
-			type = type.toLowerCase();
-
+				type = type.toLowerCase();
+	
 			if (/\s/.test(type)) {
 				// multiple event types were passed for one handler
 				Basic.each(type.split(/\s+/), function(type) {
@@ -1977,127 +1977,127 @@ define('moxie/core/EventTarget', [
 			}
 
 			list = eventpool[this.uid] && eventpool[this.uid][type];
-
-			if (list) {
-				if (fn) {
-					for (i = list.length - 1; i >= 0; i--) {
-						if (list[i].fn === fn) {
-							list.splice(i, 1);
-							break;
+	
+				if (list) {
+					if (fn) {
+						for (i = list.length - 1; i >= 0; i--) {
+							if (list[i].fn === fn) {
+								list.splice(i, 1);
+								break;
+							}
+						}
+					} else {
+						list = [];
+					}
+	
+					// delete event list if it has become empty
+					if (!list.length) {
+						delete eventpool[this.uid][type];
+						
+						// and object specific entry in a hash if it has no more listeners attached
+						if (Basic.isEmptyObj(eventpool[this.uid])) {
+							delete eventpool[this.uid];
 						}
 					}
-				} else {
-					list = [];
 				}
+			},
+			
+			/**
+			Remove all event handlers from the object
 
-				// delete event list if it has become empty
-				if (!list.length) {
-					delete eventpool[this.uid][type];
-
-					// and object specific entry in a hash if it has no more listeners attached
-					if (Basic.isEmptyObj(eventpool[this.uid])) {
-						delete eventpool[this.uid];
-					}
+			@method removeAllEventListeners
+			*/
+			removeAllEventListeners: function() {
+				if (eventpool[this.uid]) {
+					delete eventpool[this.uid];
 				}
-			}
-		},
+			},
+			
+			/**
+			Dispatch the event
 
-		/**
-		Remove all event handlers from the object
+			@method dispatchEvent
+			@param {String/Object} Type of event or event object to dispatch
+			@param {Mixed} [...] Variable number of arguments to be passed to a handlers
+			@return {Boolean} true by default and false if any handler returned false
+			*/
+			dispatchEvent: function(type) {
+				var uid, list, args, tmpEvt, evt = {}, result = true, undef;
+				
+				if (Basic.typeOf(type) !== 'string') {
+					// we can't use original object directly (because of Silverlight)
+					tmpEvt = type;
 
-		@method removeAllEventListeners
-		*/
-		removeAllEventListeners: function() {
-			if (eventpool[this.uid]) {
-				delete eventpool[this.uid];
-			}
-		},
+					if (Basic.typeOf(tmpEvt.type) === 'string') {
+						type = tmpEvt.type;
 
-		/**
-		Dispatch the event
-
-		@method dispatchEvent
-		@param {String/Object} Type of event or event object to dispatch
-		@param {Mixed} [...] Variable number of arguments to be passed to a handlers
-		@return {Boolean} true by default and false if any handler returned false
-		*/
-		dispatchEvent: function(type) {
-			var uid, list, args, tmpEvt, evt = {}, result = true, undef;
-
-			if (Basic.typeOf(type) !== 'string') {
-				// we can't use original object directly (because of Silverlight)
-				tmpEvt = type;
-
-				if (Basic.typeOf(tmpEvt.type) === 'string') {
-					type = tmpEvt.type;
-
-					if (tmpEvt.total !== undef && tmpEvt.loaded !== undef) { // progress event
-						evt.total = tmpEvt.total;
-						evt.loaded = tmpEvt.loaded;
-					}
-					evt.async = tmpEvt.async || false;
-				} else {
-					throw new x.EventException(x.EventException.UNSPECIFIED_EVENT_TYPE_ERR);
-				}
-			}
-
-			// check if event is meant to be dispatched on an object having specific uid
-			if (type.indexOf('::') !== -1) {
-				(function(arr) {
-					uid = arr[0];
-					type = arr[1];
-				}(type.split('::')));
-			} else {
-				uid = this.uid;
-			}
-
-			type = type.toLowerCase();
-
-			list = eventpool[uid] && eventpool[uid][type];
-
-			if (list) {
-				// sort event list by prority
-				list.sort(function(a, b) { return b.priority - a.priority; });
-
-				args = [].slice.call(arguments);
-
-				// first argument will be pseudo-event object
-				args.shift();
-				evt.type = type;
-				args.unshift(evt);
-
-				if (MXI_DEBUG && Env.debug.events) {
-					Env.log("Event '%s' fired on %u", evt.type, uid);
-				}
-
-				// Dispatch event to all listeners
-				var queue = [];
-				Basic.each(list, function(handler) {
-					// explicitly set the target, otherwise events fired from shims do not get it
-					args[0].target = handler.scope;
-					// if event is marked as async, detach the handler
-					if (evt.async) {
-						queue.push(function(cb) {
-							setTimeout(function() {
-								cb(handler.fn.apply(handler.scope, args) === false);
-							}, 1);
-						});
+						if (tmpEvt.total !== undef && tmpEvt.loaded !== undef) { // progress event
+							evt.total = tmpEvt.total;
+							evt.loaded = tmpEvt.loaded;
+						}
+						evt.async = tmpEvt.async || false;
 					} else {
-						queue.push(function(cb) {
-							cb(handler.fn.apply(handler.scope, args) === false); // if handler returns false stop propagation
+						throw new x.EventException(x.EventException.UNSPECIFIED_EVENT_TYPE_ERR);
+					}
+				}
+				
+				// check if event is meant to be dispatched on an object having specific uid
+				if (type.indexOf('::') !== -1) {
+					(function(arr) {
+						uid = arr[0];
+						type = arr[1];
+					}(type.split('::')));
+				} else {
+					uid = this.uid;
+				}
+				
+				type = type.toLowerCase();
+								
+				list = eventpool[uid] && eventpool[uid][type];
+
+				if (list) {
+					// sort event list by prority
+					list.sort(function(a, b) { return b.priority - a.priority; });
+					
+					args = [].slice.call(arguments);
+					
+					// first argument will be pseudo-event object
+					args.shift();
+					evt.type = type;
+					args.unshift(evt);
+
+					if (MXI_DEBUG && Env.debug.events) {
+						Env.log("Event '%s' fired on %u", evt.type, uid);	
+					}
+
+					// Dispatch event to all listeners
+					var queue = [];
+					Basic.each(list, function(handler) {
+						// explicitly set the target, otherwise events fired from shims do not get it
+						args[0].target = handler.scope;
+						// if event is marked as async, detach the handler
+						if (evt.async) {
+							queue.push(function(cb) {
+								setTimeout(function() {
+									cb(handler.fn.apply(handler.scope, args) === false);
+								}, 1);
+							});
+						} else {
+							queue.push(function(cb) {
+								cb(handler.fn.apply(handler.scope, args) === false); // if handler returns false stop propagation
+							});
+						}
+					});
+					if (queue.length) {
+						Basic.inSeries(queue, function(err) {
+							result = !err;
 						});
 					}
-				});
-				if (queue.length) {
-					Basic.inSeries(queue, function(err) {
-						result = !err;
-					});
 				}
-			}
-			return result;
-		},
-
-		/**
+				return result;
+			},
+			
+			/**
 		Register a handler to the event type that will run only once
 
 		@method bindOnce
@@ -2116,75 +2116,75 @@ define('moxie/core/EventTarget', [
 		},
 
 		/**
-		Alias for addEventListener
+			Alias for addEventListener
 
-		@method bind
-		@protected
-		*/
-		bind: function() {
-			this.addEventListener.apply(this, arguments);
-		},
+			@method bind
+			@protected
+			*/
+			bind: function() {
+				this.addEventListener.apply(this, arguments);
+			},
+			
+			/**
+			Alias for removeEventListener
 
-		/**
-		Alias for removeEventListener
+			@method unbind
+			@protected
+			*/
+			unbind: function() {
+				this.removeEventListener.apply(this, arguments);
+			},
+			
+			/**
+			Alias for removeAllEventListeners
 
-		@method unbind
-		@protected
-		*/
-		unbind: function() {
-			this.removeEventListener.apply(this, arguments);
-		},
+			@method unbindAll
+			@protected
+			*/
+			unbindAll: function() {
+				this.removeAllEventListeners.apply(this, arguments);
+			},
+			
+			/**
+			Alias for dispatchEvent
 
-		/**
-		Alias for removeAllEventListeners
+			@method trigger
+			@protected
+			*/
+			trigger: function() {
+				return this.dispatchEvent.apply(this, arguments);
+			},
+			
 
-		@method unbindAll
-		@protected
-		*/
-		unbindAll: function() {
-			this.removeAllEventListeners.apply(this, arguments);
-		},
+			/**
+			Handle properties of on[event] type.
 
-		/**
-		Alias for dispatchEvent
+			@method handleEventProps
+			@private
+			*/
+			handleEventProps: function(dispatches) {
+				var self = this;
 
-		@method trigger
-		@protected
-		*/
-		trigger: function() {
-			return this.dispatchEvent.apply(this, arguments);
-		},
+				this.bind(dispatches.join(' '), function(e) {
+					var prop = 'on' + e.type.toLowerCase();
+					if (Basic.typeOf(this[prop]) === 'function') {
+						this[prop].apply(this, arguments);
+					}
+				});
 
-
-		/**
-		Handle properties of on[event] type.
-
-		@method handleEventProps
-		@private
-		*/
-		handleEventProps: function(dispatches) {
-			var self = this;
-
-			this.bind(dispatches.join(' '), function(e) {
-				var prop = 'on' + e.type.toLowerCase();
-				if (Basic.typeOf(this[prop]) === 'function') {
-					this[prop].apply(this, arguments);
-				}
-			});
-
-			// object must have defined event properties, even if it doesn't make use of them
-			Basic.each(dispatches, function(prop) {
-				prop = 'on' + prop.toLowerCase(prop);
-				if (Basic.typeOf(self[prop]) === 'undefined') {
-					self[prop] = null;
-				}
-			});
-		}
-
-	});
+				// object must have defined event properties, even if it doesn't make use of them
+				Basic.each(dispatches, function(prop) {
+					prop = 'on' + prop.toLowerCase(prop);
+					if (Basic.typeOf(self[prop]) === 'undefined') {
+						self[prop] = null; 
+					}
+				});
+			}
+			
+		});
 
 
-	EventTarget.instance = new EventTarget();
+	EventTarget.instance = new EventTarget(); 
 
 	return EventTarget;
 });
@@ -3101,8 +3101,8 @@ define('moxie/file/Blob', [
 			*/
 			getSource: function() {
 				if (!blobpool[this.uid]) {
-					return null;	
-				}
+				return null;
+			}
 				return blobpool[this.uid];
 			},
 
@@ -3230,7 +3230,7 @@ define("moxie/core/I18n", [
 			return str.replace(/%[a-z]/g, function() {
 				var value = args.shift();
 				return Basic.typeOf(value) !== 'undefined' ? value : '';
-			});
+		});
 		}
 	};
 });
@@ -4790,7 +4790,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	function XMLHttpRequestUpload() {
 		this.uid = Basic.guid('uid_');
 	}
-
+	
 	XMLHttpRequestUpload.prototype = EventTarget.instance;
 
 	/**
@@ -4817,10 +4817,10 @@ define("moxie/xhr/XMLHttpRequest", [
 		'loadend'
 
 		// readystatechange (for historical reasons)
-	];
-
+	]; 
+	
 	var NATIVE = 1, RUNTIME = 2;
-
+					
 	function XMLHttpRequest() {
 		var self = this,
 			// this (together with _p() @see below) is here to gracefully upgrade to setter/getter syntax where possible
@@ -4886,7 +4886,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response type. Can be set to change the response type. Values are:
 				the empty string (default), "arraybuffer", "blob", "document", "json", and "text".
-
+				
 				@property responseType
 				@type String
 				*/
@@ -4894,7 +4894,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the document response entity body.
-
+				
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "document".
 
 				@property responseXML
@@ -4904,7 +4904,7 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				/**
 				Returns the text response entity body.
-
+				
 				Throws an "InvalidStateError" exception if responseType is not the empty string or "text".
 
 				@property responseText
@@ -4915,7 +4915,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				/**
 				Returns the response entity body (http://www.w3.org/TR/XMLHttpRequest/#response-entity-body).
 				Can become: ArrayBuffer, Blob, Document, JSON, Text
-
+				
 				@property response
 				@type Mixed
 				*/
@@ -4952,7 +4952,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			_responseHeadersBag
 			;
 
-
+		
 		Basic.extend(this, props, {
 			/**
 			Unique id of the component
@@ -4961,7 +4961,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type String
 			*/
 			uid: Basic.guid('uid_'),
-
+			
 			/**
 			Target for Upload events
 
@@ -4969,7 +4969,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@type XMLHttpRequestUpload
 			*/
 			upload: new XMLHttpRequestUpload(),
-
+			
 
 			/**
 			Sets the request method, request URL, synchronous flag, request username, and request password.
@@ -4997,12 +4997,12 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			open: function(method, url, async, user, password) {
 				var urlp;
-
+				
 				// first two arguments are required
 				if (!method || !url) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
 				}
-
+				
 				// 2 - check if any code point in method is higher than U+00FF or after deflating method it does not match the method
 				if (/[\u0100-\uffff]/.test(method) || Encode.utf8_encode(method) !== method) {
 					throw new x.DOMException(x.DOMException.SYNTAX_ERR);
@@ -5012,8 +5012,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				if (!!~Basic.inArray(method.toUpperCase(), ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'TRACE', 'TRACK'])) {
 					_method = method.toUpperCase();
 				}
-
-
+				
+				
 				// 4 - allowing these methods poses a security risk
 				if (!!~Basic.inArray(_method, ['CONNECT', 'TRACE', 'TRACK'])) {
 					throw new x.DOMException(x.DOMException.SECURITY_ERR);
@@ -5021,15 +5021,15 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 5
 				url = Encode.utf8_encode(url);
-
+				
 				// 6 - Resolve url relative to the XMLHttpRequest base URL. If the algorithm returns an error, throw a "SyntaxError".
 				urlp = Url.parseUrl(url);
 
 				_same_origin_flag = Url.hasSameOrigin(urlp);
-
+																
 				// 7 - manually build up absolute url
 				_url = Url.resolveUrl(url);
-
+		
 				// 9-10, 12-13
 				if ((user || password) && !_same_origin_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
@@ -5037,16 +5037,16 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				_user = user || urlp.user;
 				_password = password || urlp.pass;
-
+				
 				// 11
 				_async = async || true;
-
+				
 				if (_async === false && (_p('timeout') || _p('withCredentials') || _p('responseType') !== "")) {
 					throw new x.DOMException(x.DOMException.INVALID_ACCESS_ERR);
 				}
-
+				
 				// 14 - terminate abort()
-
+				
 				// 15 - terminate send()
 
 				// 18
@@ -5057,11 +5057,11 @@ define("moxie/xhr/XMLHttpRequest", [
 
 				// 19
 				_p('readyState', XMLHttpRequest.OPENED);
-
+				
 				// 20
 				this.dispatchEvent('readystatechange');
 			},
-
+			
 			/**
 			Appends an header to the list of author request headers, or if header is already
 			in the list of author request headers, combines its value with value.
@@ -5069,7 +5069,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			Throws an "InvalidStateError" exception if the state is not OPENED or if the send() flag is set.
 			Throws a "SyntaxError" exception if header is not a valid HTTP header field name or if value
 			is not a valid HTTP header field value.
-
+			
 			@method setRequestHeader
 			@param {String} header
 			@param {String|Number} value
@@ -5098,7 +5098,7 @@ define("moxie/xhr/XMLHttpRequest", [
 						"user-agent",
 						"via"
 					];
-
+				
 				// 1-2
 				if (_p('readyState') !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -5116,7 +5116,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}*/
 
 				header = Basic.trim(header).toLowerCase();
-
+				
 				// setting of proxy-* and sec-* headers is prohibited by spec
 				if (!!~Basic.inArray(header, uaHeaders) || /^(proxy\-|sec\-)/.test(header)) {
 					return false;
@@ -5125,7 +5125,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				// camelize
 				// browsers lowercase header names (at least for custom ones)
 				// header = header.replace(/\b\w/g, function($1) { return $1.toUpperCase(); });
-
+				
 				if (!_headers[header]) {
 					_headers[header] = value;
 				} else {
@@ -5158,7 +5158,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			},
 
 			/**
-			Returns the header field value from the response of which the field name matches header,
+			Returns the header field value from the response of which the field name matches header, 
 			unless the field name is Set-Cookie or Set-Cookie2.
 
 			@method getResponseHeader
@@ -5193,7 +5193,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 				return null;
 			},
-
+			
 			/**
 			Sets the Content-Type header for the response to mime.
 			Throws an "InvalidStateError" exception if the state is LOADING or DONE.
@@ -5204,7 +5204,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			*/
 			overrideMimeType: function(mime) {
 				var matches, charset;
-
+			
 				// 1
 				if (!!~Basic.inArray(_p('readyState'), [XMLHttpRequest.LOADING, XMLHttpRequest.DONE])) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
@@ -5228,7 +5228,7 @@ define("moxie/xhr/XMLHttpRequest", [
 				_finalMime = mime;
 				_finalCharset = charset;
 			},
-
+			
 			/**
 			Initiates the request. The optional argument provides the request entity body.
 			The argument is ignored if request method is GET or HEAD.
@@ -5239,7 +5239,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			@param {Blob|Document|String|FormData} [data] Request entity body
 			@param {Object} [options] Set of requirements and pre-requisities for runtime initialization
 			*/
-			send: function(data, options) {
+			send: function(data, options) {					
 				if (Basic.typeOf(options) === 'string') {
 					_options = { ruid: options };
 				} else if (!options) {
@@ -5247,19 +5247,19 @@ define("moxie/xhr/XMLHttpRequest", [
 				} else {
 					_options = options;
 				}
-
+															
 				// 1-2
 				if (this.readyState !== XMLHttpRequest.OPENED || _send_flag) {
 					throw new x.DOMException(x.DOMException.INVALID_STATE_ERR);
 				}
-
-				// 3
+				
+				// 3					
 				// sending Blob
 				if (data instanceof Blob) {
 					_options.ruid = data.ruid;
 					_mimeType = data.type || 'application/octet-stream';
 				}
-
+				
 				// FormData
 				else if (data instanceof FormData) {
 					if (data.hasBlob()) {
@@ -5268,12 +5268,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						_mimeType = blob.type || 'application/octet-stream';
 					}
 				}
-
+				
 				// DOMString
 				else if (typeof data === 'string') {
 					_encoding = 'UTF-8';
 					_mimeType = 'text/plain;charset=UTF-8';
-
+					
 					// data should be converted to Unicode and encoded as UTF-8
 					data = Encode.utf8_encode(data);
 				}
@@ -5304,10 +5304,10 @@ define("moxie/xhr/XMLHttpRequest", [
 				// 8.5 - Return the send() method call, but continue running the steps in this algorithm.
 				_doXHR.call(this, data);
 			},
-
+			
 			/**
 			Cancels any network activity.
-
+			
 			@method abort
 			*/
 			abort: function() {
@@ -5514,18 +5514,18 @@ define("moxie/xhr/XMLHttpRequest", [
 				}
 			}
 		}
-
+		
 		/*
 		function _toASCII(str, AllowUnassigned, UseSTD3ASCIIRules) {
 			// TODO: http://tools.ietf.org/html/rfc3490#section-4.1
 			return str.toLowerCase();
 		}
 		*/
-
-
+		
+		
 		function _doXHR(data) {
 			var self = this;
-
+			
 			_start_time = new Date().getTime();
 
 			_xhr = new RuntimeTarget();
@@ -5545,12 +5545,12 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent('readystatechange');
 
 					self.dispatchEvent(e);
-
+					
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent(e);
 					}
 				});
-
+				
 				_xhr.bind('Progress', function(e) {
 					if (_p('readyState') !== XMLHttpRequest.LOADING) {
 						_p('readyState', XMLHttpRequest.LOADING); // LoadStart unreliable (in Flash for example)
@@ -5558,7 +5558,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					}
 					self.dispatchEvent(e);
 				});
-
+				
 				_xhr.bind('UploadProgress', function(e) {
 					if (_upload_events_flag) {
 						self.upload.dispatchEvent({
@@ -5569,12 +5569,12 @@ define("moxie/xhr/XMLHttpRequest", [
 						});
 					}
 				});
-
+				
 				_xhr.bind('Load', function(e) {
 					_p('readyState', XMLHttpRequest.DONE);
 					_p('status', Number(runtime.exec.call(_xhr, 'XMLHttpRequest', 'getStatus') || 0));
 					_p('statusText', httpCode[_p('status')] || "");
-
+					
 					_p('response', runtime.exec.call(_xhr, 'XMLHttpRequest', 'getResponse', _p('responseType')));
 
 					if (!!~Basic.inArray(_p('responseType'), ['text', ''])) {
@@ -5586,7 +5586,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					_responseHeaders = runtime.exec.call(_xhr, 'XMLHttpRequest', 'getAllResponseHeaders');
 
 					self.dispatchEvent('readystatechange');
-
+					
 					if (_p('status') > 0) { // status 0 usually means that server is unreachable
 						if (_upload_events_flag) {
 							self.upload.dispatchEvent(e);
@@ -5603,7 +5603,7 @@ define("moxie/xhr/XMLHttpRequest", [
 					self.dispatchEvent(e);
 					loadEnd();
 				});
-
+				
 				_xhr.bind('Error', function(e) {
 					_error_flag = true;
 					_p('readyState', XMLHttpRequest.DONE);
@@ -5648,7 +5648,7 @@ define("moxie/xhr/XMLHttpRequest", [
 			if (!_same_origin_flag) {
 				_options.required_caps.do_cors = true;
 			}
-
+			
 
 			if (_options.ruid) { // we do not need to wait if we can connect directly
 				exec(_xhr.connectRuntime(_options));
@@ -5662,8 +5662,8 @@ define("moxie/xhr/XMLHttpRequest", [
 				_xhr.connectRuntime(_options);
 			}
 		}
-
-
+	
+		
 		function _reset() {
 			_p('responseText', "");
 			_p('responseXML', null);
@@ -5679,7 +5679,7 @@ define("moxie/xhr/XMLHttpRequest", [
 	XMLHttpRequest.HEADERS_RECEIVED = 2;
 	XMLHttpRequest.LOADING = 3;
 	XMLHttpRequest.DONE = 4;
-
+	
 	XMLHttpRequest.prototype = EventTarget.instance;
 
 	return XMLHttpRequest;
@@ -6421,27 +6421,27 @@ define("moxie/image/Image", [
 
 		function _updateInfo(info) {
 			try {
-				if (!info) {
-					info = this.exec('Image', 'getInfo');
-				}
+			if (!info) {
+				info = this.exec('Image', 'getInfo');
+			}
 
-				this.size = info.size;
-				this.width = info.width;
-				this.height = info.height;
-				this.type = info.type;
-				this.meta = info.meta;
+			this.size = info.size;
+			this.width = info.width;
+			this.height = info.height;
+			this.type = info.type;
+			this.meta = info.meta;
 
-				// update file name, only if empty
-				if (this.name === '') {
-					this.name = info.name;
-				}
+			// update file name, only if empty
+			if (this.name === '') {
+				this.name = info.name;
+			}
 				return true;
 			} catch(ex) {
 				this.trigger('error', ex.code);
 				return false;
 			}
 		}
-
+		
 
 		function _load(src) {
 			var srcType = Basic.typeOf(src);
@@ -7211,23 +7211,23 @@ define("moxie/runtime/html5/file/FileDrop", [
 					if (e.dataTransfer.items && e.dataTransfer.items[0].webkitGetAsEntry) {
 						_readItems(e.dataTransfer.items, function() {
 							comp.files = _files;
-							comp.trigger("drop");
+							comp.trigger("drop",[e]);
 						});
 					} else {
 						Basic.each(e.dataTransfer.files, function(file) {
 							_addFile(file);
 						});
 						comp.files = _files;
-						comp.trigger("drop");
+						comp.trigger("drop",[e]);
 					}
 				}, comp.uid);
 
 				Events.addEvent(dropZone, 'dragenter', function(e) {
-					comp.trigger("dragenter");
+					comp.trigger("dragenter",[e]);
 				}, comp.uid);
 
 				Events.addEvent(dropZone, 'dragleave', function(e) {
-					comp.trigger("dragleave");
+					comp.trigger("dragleave",[e]);
 				}, comp.uid);
 			},
 
@@ -9087,16 +9087,16 @@ define("moxie/runtime/html5/image/ResizerCanvas", [], function() {
         if (ratio < 0.5 || ratio > 2) {
             ratio = ratio < 0.5 ? 0.5 : 2;
             scaleCapped = true;
-        }
+		}
 
         var tCanvas = _scale(image, ratio);
 
         if (scaleCapped) {
             return scale(tCanvas, dW / tCanvas.width);
-        } else {
+		} else {
             return tCanvas;
-        }
-    }
+		}
+	}
 
 
     function _scale(image, ratio) {
@@ -9105,18 +9105,18 @@ define("moxie/runtime/html5/image/ResizerCanvas", [], function() {
         var dW = Math.floor(sW * ratio);
         var dH = Math.floor(sH * ratio);
 
-        var canvas = document.createElement('canvas');
+		var canvas = document.createElement('canvas');
         canvas.width = dW;
         canvas.height = dH;
         canvas.getContext("2d").drawImage(image, 0, 0, sW, sH, 0, 0, dW, dH);
 
         image = null; // just in case
         return canvas;
-    }
+	}
 
-    return {
+	return {
         scale: scale
-    };
+	};
 
 });
 
@@ -9148,7 +9148,7 @@ define("moxie/runtime/html5/image/Image", [
 	"moxie/core/utils/Mime",
 	"moxie/core/utils/Env"
 ], function(extensions, Basic, x, Encode, Blob, File, ImageInfo, ResizerCanvas, Mime, Env) {
-
+	
 	function HTML5Image() {
 		var me = this
 		, _img, _imgInfo, _canvas, _binStr, _blob
@@ -9213,13 +9213,13 @@ define("moxie/runtime/html5/image/Image", [
 				if (_preserveHeaders) {
 					info.meta = _imgInfo && _imgInfo.meta || this.meta || {};
 
-					// store thumbnail data as blob
-					if (info.meta && info.meta.thumb && !(info.meta.thumb.data instanceof Blob)) {
-						info.meta.thumb.data = new Blob(null, {
-							type: 'image/jpeg',
-							data: info.meta.thumb.data
-						});
-					}
+				// store thumbnail data as blob
+				if (info.meta && info.meta.thumb && !(info.meta.thumb.data instanceof Blob)) {
+					info.meta.thumb.data = new Blob(null, {
+						type: 'image/jpeg',
+						data: info.meta.thumb.data
+					});
+				}
 				}
 
 				return info;
@@ -9255,7 +9255,7 @@ define("moxie/runtime/html5/image/Image", [
 				if (!_canvas) {
 					_canvas = _getCanvas();
 				}
-				_canvas.id = this.uid + '_canvas';
+					_canvas.id = this.uid + '_canvas';
 				return _canvas;
 			},
 
@@ -10541,14 +10541,14 @@ define("moxie/runtime/silverlight/file/FileInput", [
 	"moxie/file/File",
 	"moxie/core/utils/Basic"
 ], function(extensions, File, Basic) {
-
-	function toFilters(accept) {
-		var filter = '';
-		for (var i = 0; i < accept.length; i++) {
-			filter += (filter !== '' ? '|' : '') + accept[i].title + " | *." + accept[i].extensions.replace(/,/g, ';*.');
-		}
-		return filter;
-	}
+	
+			function toFilters(accept) {
+				var filter = '';
+				for (var i = 0; i < accept.length; i++) {
+					filter += (filter !== '' ? '|' : '') + accept[i].title + " | *." + accept[i].extensions.replace(/,/g, ';*.');
+				}
+				return filter;
+			}
 
 	
 	var FileInput = {
@@ -10570,7 +10570,7 @@ define("moxie/runtime/silverlight/file/FileInput", [
 		setOption: function(name, value) {
 			if (name == 'accept') {
 				value = toFilters(value);
-			}
+		}
 			this.getRuntime().shimExec.call(this, 'FileInput', 'setOption', name, value);
 		}
 	};
@@ -11090,7 +11090,7 @@ define("moxie/runtime/html4/file/FileInput", [
 					if (I.can('summon_file_dialog')) {
 						if (Dom.getStyle(browseButton, 'position') === 'static') {
 							browseButton.style.position = 'relative';
-						}						
+						}
 
 						comp.bind('Refresh', function() {
 							zIndex = parseInt(_browseBtnZIndex, 10) || 1;
