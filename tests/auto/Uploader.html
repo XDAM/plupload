@@ -67,7 +67,7 @@ module("plupload.Uploader", {
 });
 
 
-test('addFile()', function() {	
+test('addFile()', function() {
 	var up = this.up
 	, file
 	, files = FileHash.getRuntimeFiles()
@@ -85,7 +85,7 @@ test('addFile()', function() {
 				});
 				up.addFile(nFiles[0].blob, nFiles[0].name);
 			},
-			
+
 			// moxie.file.Blob
 			function(cb) {
 				file = new moxie.file.Blob(null, files[0].getSource());
@@ -100,7 +100,7 @@ test('addFile()', function() {
 		);
 	}
 
-	
+
 	queue.push(
 		// o.File
 		function(cb) {
@@ -156,14 +156,17 @@ test('addFile()', function() {
 
 
 test('getFile()', function() {
-	expect(1);
+	expect(2);
 
 	var files = FileHash.getRuntimeFiles();
 
 	this.up.bind('TestFilesAdded', function(up, files) {
 		start();
 		var file = up.getFile(files[0].id);
-		deepEqual(file, files[0], "File retrieved by id with getFile().");
+
+		ok((files[0] instanceof plupload.File), "Objects passed in the second argument are plupload.FileUploader instances.");
+		deepEqual(file, files[0], "File item retrieved by id with getFile().");
+
 		up.unbind('TestFilesAdded');
 	});
 
@@ -172,8 +175,8 @@ test('getFile()', function() {
 });
 
 
-test('removeFile() / splice()', function() {
-	expect(5);
+test('removeFile()', function() {
+	expect(2);
 
 	var countFiles, files = FileHash.getRuntimeFiles();
 
@@ -187,8 +190,27 @@ test('removeFile() / splice()', function() {
 		up.removeFile(up.files[0].id);
 		equal(up.files.length, --countFiles, "File removed from the queue by passing file id.");
 
+		up.unbind('TestFilesAdded');
+	});
+
+	stop();
+	this.up.addFile([
+		new moxie.file.File(null, files[0]),
+		new moxie.file.File(null, files[1])
+	]);
+});
+
+
+test('splice()', function() {
+	expect(3);
+
+	var files = FileHash.getRuntimeFiles();
+
+	this.up.bind('TestFilesAdded', function(up, files) {
+		start();
+
 		up.bind('FilesRemoved', function(up, files) {
-			equal(files.length, 2, "FilesRemoved triggred, " + files.length + " removed.");
+			equal(files.length, 2, "FilesRemoved triggered, " + files.length + " removed.");
 		});
 
 		up.bind('QueueChanged', function(up) {
@@ -209,14 +231,14 @@ test('removeFile() / splice()', function() {
 });
 
 
-test('Test if internal file counters are properly updated, when queue changes.', function() {	
+test('Test if internal file counters are properly updated, when queue changes.', function() {
 	var up = this.up
 	, file
 	, files = FileHash.getRuntimeFiles()
 	, nFiles = FileHash.getNativeFiles()
 	, queue = []
 	;
-	
+
 	queue.push(
 
 		// when files are added to the queue
@@ -247,7 +269,7 @@ test('Test if internal file counters are properly updated, when queue changes.',
 	);
 
 	stop();
-	o.inSeries(queue, function() {
+	plupload.inSeries(queue, function() {
 		start();
 	});
 });

@@ -1,8 +1,8 @@
 /**
  * jquery.ui.plupload.js
  *
- * Copyright 2013, Moxiecode Systems AB
- * Released under GPL License.
+ * Copyright 2017, Ephox
+ * Released under AGPLv3 License.
  *
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
@@ -396,7 +396,9 @@ $.widget("ui.plupload", {
 		, uploader
 		, options = { 
 			container: id + '_buttons',
-			browse_button: id + '_browse'
+			browse_button: id + '_browse',
+			required_features: {},
+			filters: {}
 		}
 		;
 
@@ -414,21 +416,21 @@ $.widget("ui.plupload", {
 			}
 		});
 
-		uploader = this.uploader = uploaders[id] = new plupload.Uploader($.extend(this.options, options));
-
-		// retrieve full normalized set of options
-		this.options = uploader.getOption();
 
 		if (self.options.views.thumbs) {
-			uploader.settings.required_features.display_media = true;
+			options.required_features.display_media = true;
 		}
 
 		// for backward compatibility
 		if (self.options.max_file_count) {
-			plupload.extend(uploader.getOption('filters'), {
-				max_file_count: self.options.max_file_count
-			});
+			options.filters.max_file_count = self.options.max_file_count
 		}
+
+		uploader = this.uploader = uploaders[id] = new plupload.Uploader($.extend(this.options, options));
+
+		// retrieve full normalized set of options
+		this.options = uploader.getOption();
+		
 
 		plupload.addFileFilter('max_file_count', function(maxCount, file, cb) {
 			if (maxCount <= this.files.length - (this.total.uploaded + this.total.failed)) {
@@ -889,6 +891,9 @@ $.widget("ui.plupload", {
 				up.disableBrowse(false);
 			}
 
+			// have a helper class on a container expressing whether it has files queued or not
+			this.container.toggleClass('plupload_files_queued', up.files.length);
+
 			this._updateTotalProgress();
 		}
 
@@ -1066,6 +1071,7 @@ $.widget("ui.plupload", {
 					width: self.options.thumb_width, 
 					height: self.options.thumb_height, 
 					crop: true,
+					fit: true,
 					preserveHeaders: false,
 					swf_url: plupload.resolveUrl(self.options.flash_swf_url),
 					xap_url: plupload.resolveUrl(self.options.silverlight_xap_url)
@@ -1143,7 +1149,8 @@ $.widget("ui.plupload", {
 		}
 
 		$.each(files, function(i, file) {
-			var ext = o.Mime.getFileExtension(file.name) || 'none';
+			var m = file.name.match(/\.([^.]+)$/);
+			var ext = m && m[1].toLowerCase() || 'none';
 
 			html += file_html.replace(/\{(\w+)\}/g, function($0, $1) {
 				switch ($1) {

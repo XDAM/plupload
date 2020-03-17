@@ -48,7 +48,16 @@
 
 
 		Basic.extend(this.getShim(), {
-		
+
+			Blob: function() {
+				this.slice = function(blob, start, end, type) {
+					return new Blob(this.ruid, {
+						size: end - start,
+						type: type || ''
+					});
+				};
+			},
+
 			FileInput: function() {
 				var _files = [];
 
@@ -128,7 +137,7 @@
 									loaded: upSize,
 									total: upSize
 								});
-								updateDownProgress();
+								setTimeout(updateDownProgress, interval);
 							}
 						}
 
@@ -169,7 +178,7 @@
 
 						target.trigger('LoadStart');
 						_state = XMLHttpRequest.LOADING;
-						updateUpProgress();
+						setTimeout(updateUpProgress, interval);
 					},
 
 					getStatus: function() {
@@ -205,7 +214,7 @@
 
 						Basic.each(_meta, function(value, key) {
 							if (Basic.typeOf(value) !== 'undefined') {
-								headers.push('meta-' + key + '::' + JSON.stringify(value));
+								headers.push('meta-' + key + ':' + (typeof(value) === 'string' ? value : JSON.stringify(value)));
 							}
 						});
 

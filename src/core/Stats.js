@@ -1,12 +1,11 @@
-
 /**
-@class plupload/core/Stats
+@class plupload.core.Stats
 @constructor
 @private
 */
 define('plupload/core/Stats', [], function() {
 
-	 return function() {
+	return function() {
 		var self = this;
 
 		/**
@@ -16,7 +15,7 @@ define('plupload/core/Stats', [], function() {
 		 * @deprecated use total
 		 * @type Number
 		 */
-		self.size = 0;	
+		self.size = 0;
 
 		/**
 		 * Total size of the queue in units.
@@ -71,6 +70,31 @@ define('plupload/core/Stats', [], function() {
 		self.queued = 0;
 
 		/**
+		 * Number of items currently paused.
+		 *
+		 * @property paused
+		 * @type Number
+		 */
+		self.paused = 0;
+
+		/**
+		 * Number of items being processed.
+		 *
+		 * @property processing
+		 * @type Number
+		 */
+		self.processing = 0;
+
+
+		/**
+		 * Number of items being paused.
+		 *
+		 * @property paused
+		 * @type Number
+		 */
+		self.paused = 0;
+
+		/**
 		 * Percent of processed units.
 		 *
 		 * @property percent
@@ -102,17 +126,19 @@ define('plupload/core/Stats', [], function() {
 		 * @method reset
 		 */
 		self.reset = function() {
-			self.size             = // deprecated
-			self.total            = 
-			self.loaded           = // deprecated
-			self.processed        =
-			self.uploaded         = // deprecated
-			self.done             =
-			self.failed           = 
-			self.queued           = 
-			self.percent          =
-			self.bytesPerSec      = // deprecated
-			self.processedPerSec  = 0;
+			self.size = // deprecated
+			self.total =
+			self.loaded = // deprecated
+			self.processed =
+			self.uploaded = // deprecated
+			self.done =
+			self.failed =
+			self.queued =
+			self.processing =
+			self.paused =
+			self.percent =
+			self.bytesPerSec = // deprecated
+			self.processedPerSec = 0;
 		};
 	};
 });

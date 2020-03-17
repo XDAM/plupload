@@ -19,10 +19,9 @@ FileHash.init({
 	}
 });
 
-
-o.Env.swf_url = "../../js/flash/Moxie.swf";
-o.Env.xap_url = "../../js/silverlight/Moxie.xap";
-
+plupload.ua.swf_url = "../../js/flash/Moxie.swf";
+plupload.ua.xap_url = "../../js/silverlight/Moxie.xap";
+plupload.ua.debug.events = true;
 
 module("Methods", {
 	setup: function() {
@@ -151,7 +150,6 @@ test("unbindAll()", function(assert) {
 });
 
 
-
 module("Events");
 
 
@@ -166,11 +164,11 @@ test('Init, PostInit', function(assert) {
 		preinit: {
 			Init: function(up, info) {
 				ok(true, "Init fired.");
-				deepEqual(up, uploader, 
+				deepEqual(up, uploader,
 					"First argument is plupload.Uploader instance.");
-				ok(typeof(info) === 'object' && !o.isEmptyObj(info), 
+				ok(typeof(info) === 'object' && !plupload.isEmptyObj(info),
 					"Second arguments is object.");
-				equal(info.runtime, 'test', 
+				equal(info.runtime, 'test',
 					"Runtime identifier passed in as second argument.");
 			},
 
@@ -201,19 +199,19 @@ test('Error (plupload.INIT_ERROR)', function(assert) {
 		preinit: {
 			Init: function() {
 				ok(false, "Error fired.");
-				
+
 			},
 
 			Error: function(up, err) {
 				start();
 				ok(true, "Error fired.");
 
-				deepEqual(up, uploader, 
+				deepEqual(up, uploader,
 					"First argument is plupload.Uploader instance.");
-				ok(typeof(err) === 'object' && !o.isEmptyObj(err), 
+				ok(typeof(err) === 'object' && !plupload.isEmptyObj(err),
 					"Second arguments is object.");
 
-				equal(err.code, plupload.INIT_ERROR, 
+				equal(err.code, plupload.INIT_ERROR,
 					"Error has plupload.INIT_ERROR code");
 			}
 		}
@@ -255,26 +253,47 @@ test('Refresh', function(assert) {
 
 
 test('Destroy', function(assert) {
+	expect(4);
+
+	var runtimeFiles = FileHash.getRuntimeFiles();
+
 	var uploader = new plupload.Uploader({
 		browse_button: 'qunit-fixture',
 		runtimes: 'test',
 		url: '../upload.php',
 
 		preinit: {
-			PostInit: function() {
-				uploader.destroy();
+			PostInit: function(up) {
+				up.addFile(runtimeFiles);
 			},
 
 			Error: function() {
 				start();
-				ok(false, "Plupload cannot be initialized.");
+				assert.ok(false, "Plupload cannot be initialized.");
 			}
 		},
 
 		init: {
-			Destroy: function() {
+			FilesAdded: function(up, files) {
+				assert.ok(true, "FilesAdded fired.");
+				assert.equal(files.length, 2, files.length + " files were added");
+
+				up.destroy();
+			},
+
+			Destroy: function(up) {
 				start();
-				ok(true, "Destroy fired.");
+				assert.ok(true, "Destroy fired.");
+
+				// all files should be destroyed by this moment
+				var allDestroyed = true;
+				up.forEachItem(function(file) {
+					console.info(file.state);
+					if (file.state !== 8) { //  Queueable.DESTROYED = 8;
+						allDestroyed = false;
+					}
+				});
+				assert.ok(allDestroyed, "All files have been destroyed.");
 			}
 		}
 	});
@@ -284,7 +303,7 @@ test('Destroy', function(assert) {
 });
 
 
-test("FilesAdded, QueueChanged", function() {
+test("FileFiltered, FilesAdded, QueueChanged", function() {
 	expect(7);
 
 	var events = {
@@ -299,7 +318,7 @@ test("FilesAdded, QueueChanged", function() {
 		url: '../upload.php',
 
 		preinit: {
-			PostInit: function(up) {				
+			PostInit: function(up) {
 				up.addFile(runtimeFiles);
 			},
 
@@ -313,7 +332,8 @@ test("FilesAdded, QueueChanged", function() {
 			FileFiltered: function(up, file) {
 				if (!events.FileFiltered) {
 					ok(true, "FileFiltered fired.");
-					ok(file instanceof plupload.File, "Second argument is plupload.File instance.");
+					ok(file instanceof plupload.File,
+							"Second argument is plupload.File instance.");
 				}
 
 				events.FileFiltered++;
@@ -325,7 +345,8 @@ test("FilesAdded, QueueChanged", function() {
 				ok(true, "FilesAdded fired.");
 
 				equal(files.length, runtimeFiles.length, runtimeFiles.length + " files added to the queue.");
-				ok(files[0] instanceof plupload.File, "Files in the queue are plupload.File instances.");
+				ok(files[0] instanceof plupload.File,
+						"Files in the queue are plupload.File instances.");
 			},
 
 			QueueChanged: function() {
@@ -354,7 +375,7 @@ test("FilesRemoved, QueueChanged", function() {
 		url: '../upload.php',
 
 		preinit: {
-			PostInit: function(up) {				
+			PostInit: function(up) {
 				up.addFile(runtimeFiles);
 			},
 
@@ -391,6 +412,8 @@ test("FilesRemoved, QueueChanged", function() {
 
 
 test("StateChanged, BeforeUpload, UploadFile, UploadProgress, FileUploaded", function() {
+	expect(11);
+
 	var events = {
 		StateChanged: 0,
 		BeforeUpload: 0,
@@ -406,10 +429,10 @@ test("StateChanged, BeforeUpload, UploadFile, UploadProgress, FileUploaded", fun
 		url: '../upload.php',
 
 		preinit: {
-			Init: function(up, info) {	
+			Init: function(up, info) {
 				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
-				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme	
-				runtimeFiles[0].connectRuntime(info.ruid);		
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
 				up.addFile(runtimeFiles[0]);
 			},
 
@@ -427,47 +450,113 @@ test("StateChanged, BeforeUpload, UploadFile, UploadProgress, FileUploaded", fun
 
 			BeforeUpload: function(up, file) {
 				events.BeforeUpload++;
-				ok(true, "BeforeUpload fired.");
-				ok(file instanceof plupload.File, "File to upload is plupload.File instance.");
+				ok(file instanceof plupload.File, "Second argument in BeforeUpload handler is plupload.File instance.");
 			},
 
 
 			UploadFile: function(up, file) {
 				events.UploadFile++;
-				ok(true, "UploadFile fired.");
-				ok(file instanceof plupload.File, "File to upload is plupload.File instance.");
+				ok(file instanceof plupload.File, "Second argument in UploadFile handler is plupload.File instance.");
 			},
 
 
 			UploadProgress: function() {
-				if (!events.UploadProgress) {
-					ok(true, "UploadProgress fired.");
-				}
 				events.UploadProgress++;
 			},
 
-
 			FileUploaded: function() {
-				ok(true, "FileUploaded fired.");
+				events.FileUploaded++;
 			},
 
 
 			UploadComplete: function() {
+				events.UploadComplete++;
+
 				start();
 
-				ok(events.UploadProgress > 0, "UploadProgress fired " + events.UploadProgress + " times.");
-				equal(events.StateChanged, 2, "StateChanged fired 2 times.");
-
-				ok(true, "UploadComplete fired.");
+				plupload.each(events, function(count, name) {
+					ok(count > 0, name + " fired " + count + " times.");
+				});
 			},
 
 
 			StateChanged: function(up, file) {
-				if (!events.StateChanged) {
-					ok(true, "StateChanged fired.");
+
+				switch(up.state) {
+					case 1:
+						ok(true, "Uploader state changed to Queue.STOPPED");
+						break;
+
+					case 2:
+						ok(true, "Uploader state changed to Queue.STARTED");
+						break;
+
+					case 6:
+						ok(true, "Uploader state changed to Queue.PAUSED");
+						break;
 				}
+
 				events.StateChanged++;
-			}			
+			}
+		}
+	});
+
+	stop();
+	uploader.init();
+});
+
+
+test("It should be possible to abort file upload if false is returned from BeforeUpload handler", function(assert) {
+	expect(2);
+
+	var events = {
+		BeforeUpload: 0,
+		UploadFile: 0
+	};
+
+	var uploader = new plupload.Uploader({
+		browse_button: 'qunit-fixture',
+		runtimes: 'test',
+		url: '../upload.php',
+
+		preinit: {
+			Init: function(up, info) {
+				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
+				up.addFile(runtimeFiles[0]);
+			},
+
+			Error: function() {
+				start();
+				ok(false, "Plupload cannot be initialized.");
+			}
+		},
+
+		init: {
+			FilesAdded: function(up) {
+				up.start();
+			},
+
+
+			BeforeUpload: function(up, file) {
+				events.BeforeUpload++;
+				return false;
+			},
+
+
+			UploadFile: function(up, file) {
+				events.UploadFile++;
+			},
+
+			StateChanged: function(up, state, oldState) {
+				if (state === 6) {
+					start();
+
+					assert.ok(events.BeforeUpload > 0, "BeforeUpload has fired.");
+					assert.equal(events.UploadFile, 0, "Upload successfully stopped by returning false from BeforeUpload.");
+				}
+			}
 		}
 	});
 
@@ -477,14 +566,7 @@ test("StateChanged, BeforeUpload, UploadFile, UploadProgress, FileUploaded", fun
 
 
 test("Error (HTTP error)", function() {
-	var events = {
-		StateChanged: 0,
-		BeforeUpload: 0,
-		UploadFile: 0,
-		UploadProgress: 0,
-		FileUploaded: 0,
-		UploadComplete: 0
-	};
+	expect(5);
 
 	var uploader = new plupload.Uploader({
 		browse_button: 'qunit-fixture',
@@ -492,10 +574,10 @@ test("Error (HTTP error)", function() {
 		url: '404',
 
 		preinit: {
-			Init: function(up, info) {	
+			Init: function(up, info) {
 				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
-				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme	
-				runtimeFiles[0].connectRuntime(info.ruid);	
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
 				up.addFile(runtimeFiles[0]);
 			}
 		},
@@ -505,11 +587,16 @@ test("Error (HTTP error)", function() {
 				up.start();
 			},
 
+			CancelUpload: function() {
+				ok(true, "CancelUpload fired.");
+			},
+
 			Error: function(up, err) {
 				start();
 				ok(true, "Error fired.");
-				equal(err.code, plupload.HTTP_ERROR, "Error is of plupload.HTTP_ERROR type.");
-				ok(err.file instanceof plupload.File, "File passed along.");
+				equal(err.code, plupload.HTTP_ERROR, "Error code is plupload.HTTP_ERROR.");
+				equal(err.message, plupload.translate('HTTP Error.'), "Error message is present");
+				ok(err.file instanceof plupload.File, "Erroneous file passed as property of error object.");
 			}
 		}
 	});
@@ -518,7 +605,7 @@ test("Error (HTTP error)", function() {
 	uploader.init();
 });
 
-/**	
+/**
 @event OptionChanged
 @event Browse
 @event ChunkUploaded

@@ -19,8 +19,8 @@ FileHash.init({
 	}
 });
 
-o.Env.swf_url = "../../js/flash/Moxie.swf";
-o.Env.xap_url = "../../js/silverlight/Moxie.xap";
+plupload.ua.swf_url = "../../js/flash/Moxie.swf";
+plupload.ua.xap_url = "../../js/silverlight/Moxie.xap";
 
 module("Client-side image resizing");
 
@@ -88,7 +88,6 @@ test("Enable or disable client-side resizing in BeforeUpload", function() {
 			"Check resize options after they were disabled.");
 
 		deepEqual(up.getOption('required_features'), {
-			select_file: true,
 			select_multiple: true,
 			send_binary_string: true,
 			use_http_method: "POST"

@@ -19,8 +19,8 @@ FileHash.init({
 	}
 });
 
-o.Env.swf_url = "../../js/flash/Moxie.swf";
-o.Env.xap_url = "../../js/silverlight/Moxie.xap";
+plupload.ua.swf_url = "../../js/flash/Moxie.swf";
+plupload.ua.xap_url = "../../js/silverlight/Moxie.xap"
 
 module("Uploading");
 
@@ -36,11 +36,11 @@ test("PUT method", function() {
 		http_method: 'GRAB', // arbitrary bullshit method
 
 		preinit: {
-			Init: function(up, info) {	
+			Init: function(up, info) {
 				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
-				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme	
-				runtimeFiles[0].connectRuntime(info.ruid);	
-				up.addFile(runtimeFiles[0]);				
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
+				up.addFile(runtimeFiles[0]);
 			},
 
 			Error: function(up, err) {
@@ -51,12 +51,12 @@ test("PUT method", function() {
 
 		init: {
 			FilesAdded: function(up) {
-				equal(up.getOption('http_method'), 'POST', 
+				equal(up.getOption('http_method'), 'POST',
 					"http_method should be either PUT or POST.");
 
 				up.setOption('http_method', 'put');
 
-				equal(up.getOption('http_method'), 'PUT', 
+				equal(up.getOption('http_method'), 'PUT',
 					"http_method set to PUT and upper-cased.");
 
 				up.start();
@@ -65,9 +65,9 @@ test("PUT method", function() {
 			FileUploaded: function(up, file, result) {
 				start();
 
-				var meta = extractMeta(result.responseHeaders.split(/\r\n/));
+				var headers = Utils.parseHeaders(result.responseHeaders);
 
-				equal(meta.method, 'PUT', 
+				equal(headers['meta-method'], 'put',
 					"PUT was used as HTTP method.");
 			}
 		}
@@ -89,11 +89,11 @@ test("multipart=false (default content-type)", function() {
 		multipart: false,
 
 		preinit: {
-			Init: function(up, info) {	
+			Init: function(up, info) {
 				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
-				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme	
-				runtimeFiles[0].connectRuntime(info.ruid);	
-				up.addFile(runtimeFiles[0]);				
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
+				up.addFile(runtimeFiles[0]);
 			},
 
 			Error: function(up, err) {
@@ -110,9 +110,10 @@ test("multipart=false (default content-type)", function() {
 			FileUploaded: function(up, file, result) {
 				start();
 
-				var meta = extractMeta(result.responseHeaders.split(/\r\n/));
+				var headers = Utils.parseHeaders(result.responseHeaders);
+				var requestHeaders = JSON.parse(headers['meta-headers']);
 
-				equal(meta.headers['content-type'], 'application/octet-stream',
+				equal(requestHeaders['content-type'], 'application/octet-stream',
 					"By default Content-Type is set to application/octet-stream.");
 			}
 		}
@@ -137,11 +138,11 @@ test("multipart=false", function() {
 		},
 
 		preinit: {
-			Init: function(up, info) {	
+			Init: function(up, info) {
 				var runtimeFiles = FileHash.getRuntimeFiles(info.ruid);
-				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme	
-				runtimeFiles[0].connectRuntime(info.ruid);	
-				up.addFile(runtimeFiles[0]);				
+				runtimeFiles[0].ruid = info.ruid; // otherwise it fails to connect to test runitme
+				runtimeFiles[0].connectRuntime(info.ruid);
+				up.addFile(runtimeFiles[0]);
 			},
 
 			Error: function(up, err) {
@@ -156,16 +157,19 @@ test("multipart=false", function() {
 			},
 
 			FileUploaded: function(up, file, result) {
-				start();
+				var headers = Utils.parseHeaders(result.responseHeaders);
+				var requestHeaders = JSON.parse(headers['meta-headers']);
 
-				var meta = extractMeta(result.responseHeaders.split(/\r\n/));
-
-				equal(meta.headers['content-type'], 'custom/mime-type',
+				equal(requestHeaders['content-type'], 'custom/mime-type',
 					"If Content-Type supplied it should be used instead of default (application/octet-stream).");
 
-				var urlParts = meta.url.split(/\?/);
-				ok(urlParts[1] && /(?:^|[\?&]?)name=/.test(urlParts[1]), 
+				var urlParts = headers['meta-url'].split(/\?/);
+				ok(urlParts[1] && /(?:^|[\?&]?)name=/.test(urlParts[1]),
 					"name argument will be sent even if send_file_name=false.");
+			},
+
+			UploadComplete: function() {
+				start();
 			}
 		}
 	});
@@ -173,19 +177,6 @@ test("multipart=false", function() {
 	stop();
 	uploader.init();
 });
-
-
-
-function extractMeta(headers) {
-	var meta = {};
-	o.each(headers, function(header) {
-		if (/^meta\-/.test(header)) {
-			var parts = header.split(/::/);
-			meta[parts[0].replace(/^meta\-/, '')] = JSON.parse(parts[1]);
-		}
-	});
-	return meta;
-}
 
 </script>
 </head>
