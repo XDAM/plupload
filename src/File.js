@@ -78,11 +78,31 @@ define('plupload/File', [
             origSize: file.size,
 
             start: function() {
-                var prevState = this.state;
-
+                
                 if (this.state === Queueable.PROCESSING) {
                     return false;
                 }
+
+                if (this._options.hash) {
+                    var self = this;
+                    var reader = new FileReader();
+                    reader.addEventListener('loadend', function (e)
+                    {
+                        var spark = new SparkMD5.ArrayBuffer();
+                        spark.append(e.target.result);
+                        self._options.params.fileHash = spark.end();
+                        self.startUpload();
+                    });
+                    reader.readAsArrayBuffer(file.getSource());
+                } else {
+                    this.startUpload();
+                }
+
+                return true;
+            },
+
+            startUpload: function() {
+                var prevState = this.state;
 
                 this.state = Queueable.PROCESSING;
                 this.trigger('statechanged', this.state, prevState);
@@ -93,7 +113,6 @@ define('plupload/File', [
                 } else {
                     this.upload();
                 }
-                return true;
             },
 
             /**

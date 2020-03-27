@@ -98,7 +98,6 @@ define('plupload/FileUploader', [
 			uploadChunk: function(seq, dontStop) {
 				var self = this;
 				var chunkSize = this.getOption('chunk_size');
-				var up;
 				var chunk = {};
 				var _options;
 
@@ -106,6 +105,11 @@ define('plupload/FileUploader', [
 				chunk.start = chunk.seq * chunkSize;
 				chunk.end = Math.min(chunk.start + chunkSize, file.size);
 				chunk.total = file.size;
+
+				if (self._options.send_chunk_number) {
+					self._options.params.chunk = chunk.seq;
+					self._options.params.chunks = _totalChunks;
+				}
 
 				// do not proceed for weird chunks
 				if (chunk.start < 0 || chunk.start >= file.size) {
@@ -118,6 +122,29 @@ define('plupload/FileUploader', [
 						chunks: _totalChunks
 					}
 				});
+
+				if (_options.hash) {
+					var reader = new FileReader();
+					reader.addEventListener('loadend', function (e)
+					{
+						var spark = new SparkMD5.ArrayBuffer();
+						spark.append(e.target.result);
+						var hash = spark.end();
+						_options.params.hash = hash;
+						
+						self.chunkUpload(chunk, dontStop, _options);
+					});
+					
+					reader.readAsArrayBuffer(file.slice(chunk.start, chunk.end, file.type).getSource());
+				} else {
+					self.chunkUpload(chunk, dontStop, _options);
+				}
+				return true;
+			},
+
+			chunkUpload: function(chunk, dontStop, _options) {
+				var self = this;
+				var up;
 
 				up = new ChunkUploader(file.slice(chunk.start, chunk.end, file.type));
 
@@ -170,8 +197,6 @@ define('plupload/FileUploader', [
 				if (dontStop && queue.countSpareSlots()) {
 					self.uploadChunk(getNextChunk(), dontStop);
 				}
-
-				return true;
 			},
 
 			destroy: function() {
