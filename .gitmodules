@@ -7,3 +7,6 @@
 [submodule "examples/handler-php"]
 	path = examples/handler-php
 	url = https://github.com/moxiecode/plupload-handler-php.git
+[submodule "src/js-spark-md5"]
+	path = src/js-spark-md5
+	url = https://github.com/satazor/js-spark-md5.git
